@@ -4,10 +4,10 @@
 # =============== #
 # Unity generated #
 # =============== #
-Source Code/Temp/
-Source Code/Obj/
-Source Code/UnityGenerated/
-Source Code/Library/
+Source Code/Temp/*
+Source Code/Obj/*
+Source Code/UnityGenerated/*
+Source Code/Library/*
 Source Code/Assets/AssetStoreTools*
 
 # ===================================== #
