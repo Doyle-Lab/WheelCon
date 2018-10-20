@@ -1,14 +1,10 @@
 #gitignore
 
-
-# =============== #
-# Unity generated #
-# =============== #
-Source Code/Temp/*
-Source Code/Obj/*
-Source Code/UnityGenerated/*
-Source Code/Library/*
-Source Code/Assets/AssetStoreTools*
+Source Code/Temp/
+Source Code/Obj/
+Source Code/UnityGenerated/
+Source Code/Library/
+Source Code/Assets/AssetStoreTools
 
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
