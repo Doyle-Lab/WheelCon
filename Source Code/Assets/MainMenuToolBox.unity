@@ -1475,7 +1475,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   saveFileField: {fileID: 0}
-  sensitivitySlider: {fileID: 993170169}
   thisButton: {fileID: 0}
 --- !u!1 &1205785086
 GameObject:
@@ -2110,7 +2109,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   saveFileField: {fileID: 0}
-  sensitivitySlider: {fileID: 993170169}
   thisButton: {fileID: 0}
 --- !u!1 &1942391865
 GameObject:

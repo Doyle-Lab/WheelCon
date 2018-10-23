@@ -6,8 +6,11 @@ using UnityEngine.UI;
 
 public class ValSensitivity : MonoBehaviour {
 
+    public static float sensitivity; 
+
     public InputField field;
     public Slider slider;
+
 	public void setField()
     {
         field.text = slider.value.ToString("0.000");
@@ -16,6 +19,12 @@ public class ValSensitivity : MonoBehaviour {
     public void setSlider()
     {
         slider.value = Convert.ToSingle(field.text); 
+    }
+
+    private void Update()
+    {
+
+        sensitivity = slider.value; 
     }
 
 }

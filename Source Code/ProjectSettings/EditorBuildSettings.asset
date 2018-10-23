@@ -18,8 +18,8 @@ EditorBuildSettings:
     path: Assets/MountainBikeTask.unity
     guid: 663b0bf7959cf9e46b2c430dc118cde8
   - enabled: 1
-    path: Assets/fittsLawTest.unity
-    guid: bc9074fe579a89c4c830f1a49d34ede8
+    path: Assets/FittsLawTask.unity
+    guid: 8b843085f6b3989439140ce1ee5ab4f2
   - enabled: 1
-    path: Assets/endGame.unity
+    path: Assets/EndGame.unity
     guid: ada10bdc251684c41b7b88e13293839c

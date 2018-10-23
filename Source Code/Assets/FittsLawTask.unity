@@ -276,7 +276,7 @@ GameObject:
   - component: {fileID: 1026401367}
   - component: {fileID: 1026401366}
   m_Layer: 0
-  m_Name: TheScript
+  m_Name: Script
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -290,7 +290,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1026401365}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dbc6bf2b3e9e242488afdc3f3c19ee89, type: 3}
+  m_Script: {fileID: 11500000, guid: 84a3849db39c8014c913e55811d229b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   horizontalLine: {fileID: 1587634575}
@@ -320,7 +320,7 @@ GameObject:
   - component: {fileID: 1121304227}
   - component: {fileID: 1121304226}
   m_Layer: 0
-  m_Name: Goal
+  m_Name: Goal Line
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -434,7 +434,7 @@ GameObject:
   - component: {fileID: 1332951336}
   - component: {fileID: 1332951335}
   m_Layer: 0
-  m_Name: Player Position
+  m_Name: Player Line
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -646,7 +646,7 @@ GameObject:
   - component: {fileID: 1587634576}
   - component: {fileID: 1587634575}
   m_Layer: 0
-  m_Name: Axis
+  m_Name: Horizontal Line
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -972,7 +972,7 @@ GameObject:
   - component: {fileID: 2032348452}
   - component: {fileID: 2032348451}
   m_Layer: 5
-  m_Name: Time
+  m_Name: Time Notification
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

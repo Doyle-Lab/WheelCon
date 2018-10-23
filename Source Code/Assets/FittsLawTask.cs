@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 
-public class fittsLawTest : MonoBehaviour
+public class FittsLawTask : MonoBehaviour
 {
     /**************************
      * FOR TOOLBOX PUBLISHING *
@@ -14,7 +14,6 @@ public class fittsLawTest : MonoBehaviour
     /***********************************************
      *           Game Version for the              *
      *        Verification of Fitts Law            *
-     *    w/ Audio Tone for Advanced Warning       *
      *                                             *
      * Input File Format:                          *
      * Time, Goal Width, Goal Distance             *
@@ -24,7 +23,7 @@ public class fittsLawTest : MonoBehaviour
      **********************************************/
 
 
-    /*Variables for File Interaction*/
+    /* Variables for File Interaction */
     private static string inputFilePath; /* path to input file */
     private string saveFilePath; /* path to output file */
     private List<string> errorData; /* holds error information of each cycle in a formatted string */
@@ -36,12 +35,12 @@ public class fittsLawTest : MonoBehaviour
 
     /* player line of constant width and height but variable x-position */
     public LineRenderer playerLine;
-    private float playerLineHeight = 2; 
-    private float playerLineXPos = 0; 
+    private float playerLineHeight = 2;
+    private float playerLineXPos = 0;
 
     /* goal line of variable width and x-position, but constant height */
     public LineRenderer goalLine;
-    private int goalLineHeight; 
+    private int goalLineHeight;
     private float goalLineWidth;
     private float goalLineXPos;
 
@@ -53,19 +52,18 @@ public class fittsLawTest : MonoBehaviour
     private const float YminScreen = -3.5f;
     private const float YmaxScreen = 6.5f;
     private const float totalAngleRange = 120f; /* accepted angle span of wheel */
-    
+
     /* Variables for Keeping Time */
     private float gameTime;
     private Boolean gameIsRunning;
 
     /* Variables for Accessing and Controlling the Wheel */
-    private int deviceIdx = 0; // corresponds to first wheel plugged into computer 
-    private string wheelProp; // use to display properties of system
-    private bool logiIni; // use to check if wheel is working
-    private float angle = 0; //angle of wheel
-    private float NormalizedAngle = 0; //Added March27, 2018
-    private LogitechGSDK.DIJOYSTATE2ENGINES rec; // holds states of the wheel
- 
+    private int deviceIdx = 0; /* corresponds to first wheel plugged into computer */
+    private string wheelProp; /* use to display properties of system */
+    private bool logiIni; /* use to check if wheel is working */
+    private float NormalizedAngle = 0; /* angle of wheel in degrees */
+    private LogitechGSDK.DIJOYSTATE2ENGINES rec; /* current state of the wheel */
+
     /* Animation Curves for Holding Distance and Width Data of Goal Zone */
     private AnimationCurve distances; /* holds distance of target zone from center */
     private AnimationCurve widths; /* holds width of target zone */
@@ -73,7 +71,7 @@ public class fittsLawTest : MonoBehaviour
     /* Text Notification of Time */
     public Text timeNotification;
 
-    /* Different Experiment Parameters */
+    /* Experimental Parameters */
     private int gameLength;  /* gameLength in seconds */
 
     void Start()
@@ -82,7 +80,8 @@ public class fittsLawTest : MonoBehaviour
         /* get file interaction & sensitivity values from menu class */
         RecordFileName = BeginButtonControl.saveFileName;
         inputFilePath = BeginButtonControl.inputFilePath;
-        sensitivity = 0.1f * BeginButtonControl.sensitivity;
+        sensitivity = 0.1f * ValSensitivity.sensitivity;
+
 
         LoadTestParameters(ref distances, ref widths);
 
@@ -98,11 +97,11 @@ public class fittsLawTest : MonoBehaviour
         LogitechGSDK.LogiSetPreferredControllerProperties(properties);
         rec = LogitechGSDK.LogiGetStateCSharp(deviceIdx);  /*responsible for recording state of the wheel*/
 
-    
+
         /* create the horizontal axis line */
         horizontalLine.SetWidth(0.1f, 0.1f);
         horizontalLine.SetVertexCount(2);
-        horizontalLine.SetPositions(new Vector3[2] { new Vector3( -11, 0, 0), new Vector3(11, 0, 0) });
+        horizontalLine.SetPositions(new Vector3[2] { new Vector3(-11, 0, 0), new Vector3(11, 0, 0) });
         horizontalLine.material = new Material(Shader.Find("Sprites/Default"));
         horizontalLine.SetColors(Color.magenta, Color.magenta);
 
@@ -110,7 +109,7 @@ public class fittsLawTest : MonoBehaviour
         /* create vertical line that represents player position */
         playerLine.SetWidth(0.05f, 0.05f);
         playerLine.SetVertexCount(2);
-        playerLineXPos = 0; 
+        playerLineXPos = 0;
         playerLine.SetPositions(new Vector3[2] { new Vector3(playerLineXPos, -playerLineHeight, 0), new Vector3(playerLineXPos, playerLineHeight, 0) });
         playerLine.material = new Material(Shader.Find("Sprites/Default"));
         playerLine.SetColors(Color.green, Color.green);
@@ -127,52 +126,53 @@ public class fittsLawTest : MonoBehaviour
         goalLine.SetColors(Color.gray, Color.gray);
         goalLine.sortingOrder = 1;
 
-        saveFilePath = Path.GetDirectoryName(Path.GetDirectoryName(Application.dataPath));
+
         errorData = new List<string>();
 
         DateTime nowDate = DateTime.UtcNow;
         gameDate = nowDate.ToString("yyyyMMddhhmmss");
 
-     
+
         /******************************************
          * Set up Parameters for Game Experiments *
          ******************************************/
-
+        saveFilePath = Path.GetDirectoryName(Application.dataPath);
         gameIsRunning = true;
 
     }
 
     void Update()
     {
-       
-        /*update current in-game time and round to nearest millisecond*/
+
+        /* update current in-game time and round to nearest millisecond */
         gameTime = Time.timeSinceLevelLoad;
         gameTime = (float)(Math.Round((double)gameTime, 3));
-      
 
-        /*check if game is over*/
-        if ((int) gameTime > gameLength)
+
+        /* check if game is over
+         * if so, write output file & open end game scene */
+        if ((int)gameTime > gameLength)
         {
             gameIsRunning = false;
             saveScoreFile(errorData.ToArray());
-            SceneManager.LoadScene("endGameFittsLaw");
+            SceneManager.LoadScene(5);
         }
 
-        /*if game is not over & still running*/
+        /* if game is not over & still running */
         if (gameIsRunning)
-        { 
-            
-            /*update time notification*/
+        {
+
+            /* update time notification */
             timeNotification.text = (int)gameTime + "s";
 
-            /*update width of goal zone with info already loaded from text file*/
+            /* update width of goal zone with info already loaded from text file */
             goalLineWidth = widths.Evaluate(gameTime);
             goalLine.SetWidth(goalLineWidth, goalLineWidth);
             goalLineXPos = distances.Evaluate(gameTime);
 
             goalLine.SetPositions(new Vector3[2] { new Vector3(goalLineXPos, -goalLineHeight, 0), new Vector3(goalLineXPos, goalLineHeight, 0) });
 
-           
+
             /* make sure steering wheel is initialized and connected: */
             if (!logiIni)
             {
@@ -195,17 +195,16 @@ public class fittsLawTest : MonoBehaviour
 
                 /* record state of the wheel and converts to an angle in degrees */
                 rec = LogitechGSDK.LogiGetStateCSharp(deviceIdx);
-                angle = rec.lX;  
-                NormalizedAngle = angle * 900 / 65536;
-                          
+                NormalizedAngle = rec.lX * 900 / 65536;
+
                 /* set the player position to a scaled factor of the angle of the wheel
                  * NOTE: player position is not related to previous position of the player.
                  * this means angle of the wheel = position on the screen
                  */
-                 
+
                 playerLineXPos = sensitivity * NormalizedAngle;
-              
-                /* keep the player position from going off the screen */ 
+
+                /* keep the player position from going off the screen */
                 if (playerLineXPos < XminScreen)
                 {
                     playerLineXPos = (float)XminScreen;
@@ -218,7 +217,7 @@ public class fittsLawTest : MonoBehaviour
                 /* set position of the player line */
                 playerLine.SetPositions(new Vector3[2] { new Vector3(playerLineXPos, -playerLineHeight, 0), new Vector3(playerLineXPos, playerLineHeight, 0) });
 
-                /* calculate the error and add to text file for output */
+                /* calculate the error and add to list for output */
                 reportPositions();
             }
 
@@ -230,14 +229,14 @@ public class fittsLawTest : MonoBehaviour
 
     }
 
-   
+
     public void LoadTestParameters(ref AnimationCurve distance, ref AnimationCurve width)
     {
         distance = new AnimationCurve();
         distance.preWrapMode = WrapMode.ClampForever;
         distance.postWrapMode = WrapMode.ClampForever;
         distance.AddKey(0, -1);
-       
+
 
         width = new AnimationCurve();
         width.preWrapMode = WrapMode.ClampForever;
@@ -247,28 +246,26 @@ public class fittsLawTest : MonoBehaviour
         try
         {
             string line;
-            float gameLengthTime = 0;
-
 
             StreamReader theReader = new StreamReader(inputFilePath, System.Text.Encoding.Default);
-           
+
             using (theReader)
             {
 
                 float time;
                 float distanceVal;
                 float widthVal;
-                
-               
+
+
                 do
                 {
-                    
+
                     line = theReader.ReadLine();
 
                     if (line != null)
                     {
                         string[] entries = line.Split(',');
-                       
+
 
                         if (entries.Length > 0)
                         {
@@ -276,17 +273,16 @@ public class fittsLawTest : MonoBehaviour
                             widthVal = Convert.ToSingle(entries[1]);
                             distanceVal = Convert.ToSingle(entries[2]);
 
-                            gameLengthTime = Mathf.Max(time, gameLengthTime);
                             width.AddKey(time, widthVal);
                             distance.AddKey(time, distanceVal);
-                            
+
+                            gameLength = (int)time + 1;
+
                         }
                     }
                 }
                 while (line != null);
                 /* Done reading, close the reader and return true to broadcast success */
-
-                gameLength = (int) gameLengthTime + 1;
                 theReader.Close();
                 return;
             }
@@ -295,11 +291,11 @@ public class fittsLawTest : MonoBehaviour
          * on what didn't work */
         catch (Exception e)
         {
-            Debug.Log("ERROR: " +  e.Message);
+            Debug.Log("ERROR: " + e.Message);
             return;
         }
 
-        
+
     }
 
     public void wheelPropSetup(ref LogitechGSDK.LogiControllerPropertiesData prop)
@@ -329,7 +325,7 @@ public class fittsLawTest : MonoBehaviour
          * data saved in order of:
          * time, player position, width, distance
          */
-       
+
 
         float time = gameTime;
         float playerPosition = playerLineXPos;
@@ -352,19 +348,28 @@ public class fittsLawTest : MonoBehaviour
         * in the order of:
         * time, player position, width, distance (Goal Position)
         * 
-        * FILES SAVED IN UnityCode/FittsLawData
+        * FILES SAVED IN "Executable & Output Files/FittsLawData"
         */
 
+        string outputFileName = RecordFileName + "_" + gameDate + ".txt";
+        string outputFilePath = saveFilePath + "/FittsLawData/";
 
-        string outputFilePath = saveFilePath + "/FittsLawData/" + RecordFileName + "_" + gameDate + ".txt";
+
+        /* check if directory exists & create if not */
+        if (!Directory.Exists(outputFilePath))
+        {
+            Directory.CreateDirectory(outputFilePath);
+        }
 
         /* Save Score: */
-        if (!File.Exists(outputFilePath)) /* If it doesn't exist yet, create it */
+        outputFilePath += outputFileName;
+
+        /* If file doesn't exist yet, create it */
+        if (!File.Exists(outputFilePath))
         {
             File.WriteAllText(outputFilePath, "");
         }
         File.WriteAllLines(outputFilePath, data);
-        
 
     }
 }
