@@ -239,8 +239,8 @@ public class MountainBikeTask : MonoBehaviour
                 /* add recorded angle to list with time at which that angle occured */
                 wheelAngles.Add(new float[] { gameTime, normalizedAngle });
 
-                /* remove old entries from wheelAngles list */
-                for (int i = 0; i < wheelAngles.Count; i++)
+                /* find angle at action delay & remove unnecessary entries */
+                for (int i = wheelAngles.Count - 1; i >= 0; i--)
                 {
 
                     if (gameTime - wheelAngles[i][0] > actionDelay)
