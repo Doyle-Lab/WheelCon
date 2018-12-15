@@ -1475,6 +1475,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   saveFileField: {fileID: 0}
+  sensitivitySlider: {fileID: 993170169}
   thisButton: {fileID: 0}
 --- !u!1 &1205785086
 GameObject:
@@ -1863,9 +1864,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1820795000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1c8e602f4ee1d948889694db5c0a974, type: 3}
+  m_Script: {fileID: 11500000, guid: 7d30eb2b4063bc446873e3fb3ced2534, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  saveFileField: {fileID: 0}
+  sensitivitySlider: {fileID: 0}
+  thisButton: {fileID: 0}
 --- !u!114 &1820795003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1906,7 +1910,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1820795002}
-        m_MethodName: exit
+        m_MethodName: exitGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2109,6 +2113,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   saveFileField: {fileID: 0}
+  sensitivitySlider: {fileID: 993170169}
   thisButton: {fileID: 0}
 --- !u!1 &1942391865
 GameObject:

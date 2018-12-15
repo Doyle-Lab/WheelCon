@@ -1,21 +1,22 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using SFB;
-using System;
+using System; 
+ 
 
-
-public class BeginButtonControl : MonoBehaviour
-{
+public class BeginButtonControl : MonoBehaviour {
 
     public static string saveFileName;
     public static string inputFilePath;
+    public static float sensitivity; 
 
     public InputField saveFileField;
+    public Slider sensitivitySlider;
     public Button thisButton;
 
     public void setFileName()
     {
-
+       
         saveFileName = saveFileField.text;
     }
 
@@ -27,7 +28,7 @@ public class BeginButtonControl : MonoBehaviour
 
     private void Start()
     {
-
+        
     }
 
     private void Update()
@@ -43,5 +44,16 @@ public class BeginButtonControl : MonoBehaviour
             else
                 thisButton.interactable = false;
         }
+    }
+
+
+    public void setSensitivity()
+    {
+        sensitivity = sensitivitySlider.value; 
+    }
+
+    public void exitGame()
+    {
+        Application.Quit(); 
     }
 }

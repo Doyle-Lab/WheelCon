@@ -14,14 +14,14 @@ using System.Collections.Generic;
 public class MountainBikeTask : MonoBehaviour
 {
 
-    /**********************************************************************************************************************************
-     *                                                 Mountain Bike Task                                                             *
-     *                                                                                                                                *
-     * Input File Format:                                                                                                             *
-     * Time, Path Position, Bump Size, Action Quantization, Action Delay, Vision Delay, Vision Quantization                           *
-     * Output Saved as:                                                                                                               *
-     * Time, Path Position, Bump Size, Action Quantization, Action Delay, Vision Delay, Vision Quantization, Trail Error, Wheel Angle *
-     *********************************************************************************************************************************/
+    /************************************************************************************************************************
+     *                                       Mountain Bike Task                                                             *
+     *                                                                                                                      *
+     * Input File Format:                                                                                                   *
+     * Time, Path Angle, Bump Size, Action Quantization, Action Delay, Vision Delay, Vision Quantization                    *
+     * Output Saved as:                                                                                                     *
+     * Time, Path Angle, Bump Size, Quantization, Action Delay, Vision Delay, Vision Quantization, Trail Error, Wheel Angle *
+     ***********************************************************************************************************************/
 
 
     /* Variables for File Interaction */
@@ -33,13 +33,13 @@ public class MountainBikeTask : MonoBehaviour
 
     /* Horizontal Axis */
     public LineRenderer horizontalLine;
-    private float horizontalLineWidth = 0.1f;
+    private float horizontalLineWidth = 0.1f; 
 
     /* player line of constant width and height but variable x-position */
     public LineRenderer playerLine;
     private float playerLineHeight = 1f;
     private float playerLineWidth = 0.05f;
-    private float playerLineXPos = 0;
+    private float playerLineXPos = 0; 
 
     /* path line of variable x-position, y-position, and length */
     public LineRenderer pathLine;
@@ -47,14 +47,14 @@ public class MountainBikeTask : MonoBehaviour
     private float pathLineWidth = 0.1f;
     private float pathLineXPos;
     private float pathPositionXPos;
-
+    
     /* Variables for Screen Interaction */
     private static float sensitivity; /* sensitivty constant of wheel */
-    private const float XminScreen = -10f;
+    private const float XminScreen = -10f; 
     private const float XmaxScreen = 10f;
     private const float YminScreen = -3.5f;
     private const float YmaxScreen = 6.5f;
-    private const float totalAngleRange = 180f; /* accepted angle span of wheel */
+    private const float totalAngleRange = 180f; /* accepted angle span of wheel */ 
     private float dy_per_dt = 2.5f; /* forward speed */
 
     /* Variables for Keeping Time */
@@ -68,12 +68,12 @@ public class MountainBikeTask : MonoBehaviour
     private bool logiIni; /* use to check if wheel is working */
     private float normalizedAngle; /* angle of the wheel in degrees */
     private LogitechGSDK.DIJOYSTATE2ENGINES rec; /* current state of the wheel */
-
+ 
     /* Variables for Quantization */
     private int actionQuantizationLevel; /* current action quantization level 1 --> 10 */
     private int visionQuantizationLevel; /* current vision quantization level 1 --> 10 */
     private float quantizedAngle; /* quantized wheel angle value */
-
+    
     /* Animation Curves for */
     private AnimationCurve trailPositionCurve; /* x-displacement of trail with respect to center */
     private AnimationCurve actionQuantizationCurve; /* positive integer quantization level */
@@ -88,7 +88,7 @@ public class MountainBikeTask : MonoBehaviour
     public Text actionQuantizationNotification;
     public Text visionDelayNotification;
     public Text actionDelayNotification;
-    public Text visionQuantizationNotification;
+    public Text visionQuantizationNotification; 
 
     /* Variables for Bumps */
     private float bumpSize;
@@ -100,14 +100,14 @@ public class MountainBikeTask : MonoBehaviour
     /* Variables for Vision Delay */
     private float pathHistory = 1f; /* amount of history of path shown in seconds */
     private float visionDelay; /* current amount of vision delay in seconds */
-
+       
     void Start()
     {
         /* load variables from menu class */
         inputFilePath = BeginButtonControl.inputFilePath;
         RecordFileName = BeginButtonControl.saveFileName;
-        sensitivity = 0.01f * ValSensitivity.sensitivity;
-
+        sensitivity = 0.01f * BeginButtonControl.sensitivity; 
+       
 
         LoadTestParameters(ref trailPositionCurve, ref actionQuantizationCurve, ref visionDelayCurve, ref bumpSizeCurve, ref actionDelayCurve, ref visionQuantizationCurve);
 
@@ -116,11 +116,11 @@ public class MountainBikeTask : MonoBehaviour
          **************************************/
 
         /* allow full range of motion for the steering wheel & set steering wheel gains */
-        logiIni = LogitechGSDK.LogiSteeringInitialize(false);
+        logiIni = LogitechGSDK.LogiSteeringInitialize(false); 
         LogitechGSDK.LogiControllerPropertiesData properties = new LogitechGSDK.LogiControllerPropertiesData();
         wheelPropSetup(ref properties);
         LogitechGSDK.LogiSetPreferredControllerProperties(properties); /* set properties of wheel */
-        rec = LogitechGSDK.LogiGetStateCSharp(deviceIdx);
+        rec = LogitechGSDK.LogiGetStateCSharp(deviceIdx); 
 
         /***********************
          * Set Up GUI Elements *
@@ -129,10 +129,10 @@ public class MountainBikeTask : MonoBehaviour
         /* create the horizontal axis line */
         horizontalLine.SetWidth(horizontalLineWidth, horizontalLineWidth);
         horizontalLine.SetVertexCount(2);
-        horizontalLine.SetPositions(new Vector3[2] { new Vector3(-11, 0, 0), new Vector3(11, 0, 0) });
+        horizontalLine.SetPositions(new Vector3[2] { new Vector3( -11, 0, 0), new Vector3(11, 0, 0) });
         horizontalLine.material = new Material(Shader.Find("Sprites/Default"));
-        horizontalLine.SetColors(Color.magenta, Color.magenta);
-
+        horizontalLine.SetColors(Color.magenta, Color.magenta); 
+        
 
         /* create path line */
         pathLine.SetWidth(pathLineWidth, pathLineWidth);
@@ -141,7 +141,7 @@ public class MountainBikeTask : MonoBehaviour
         pathLine.material = new Material(Shader.Find("Sprites/Default"));
         pathLine.SetColors(Color.grey, Color.grey);
         pathHistory = 1f; /* amount of history of path shown in seconds */
-
+        
         /* create vertical line that represents player position */
         playerLine.SetWidth(playerLineWidth, playerLineWidth);
         playerLine.SetVertexCount(2);
@@ -158,34 +158,43 @@ public class MountainBikeTask : MonoBehaviour
         saveFilePath = Path.GetDirectoryName(Application.dataPath);
 
         gameDate = DateTime.UtcNow.ToString("yyyyMMddhhmmss");
-
+        
         gameIsRunning = true;
-
+      
     }
 
     void Update()
     {
-
+       
         /* update current in-game time and round to nearest millisecond */
         gameTime = Time.timeSinceLevelLoad;
         gameTime = (float)(Math.Round((double)gameTime, 3));
+      
 
-
-        /* check if game is over
-         * if so, write the output file & go to end game page */
-        if ((int)gameTime > gameLength)
+        /* check if game is over */
+        if ((int) gameTime > gameLength)
         {
             gameIsRunning = false;
             saveScoreFile(errorData.ToArray());
             SceneManager.LoadScene(5);
         }
 
+        /* check for Esc key press */
+        if (Input.GetKey("escape"))
+        {
+            /* go to Main Menu if pressed */
+            SceneManager.LoadScene(0);
+        }
+
+
         /* if game is not over & still running */
         if (gameIsRunning)
         {
 
+            //horizontalLine.SetPositions(new Vector3[2] { new Vector3(-11, 0, 1), new Vector3(11, 0, 1) });
+
             /* update action quantization level & notification */
-            actionQuantizationLevel = (int)Math.Ceiling(actionQuantizationCurve.Evaluate(gameTime));
+            actionQuantizationLevel = (int) Math.Ceiling( actionQuantizationCurve.Evaluate(gameTime));
             actionQuantizationNotification.text = "Action Quant: " + actionQuantizationLevel;
 
             /* update vision quantization level & notification */
@@ -236,14 +245,12 @@ public class MountainBikeTask : MonoBehaviour
                 rec = LogitechGSDK.LogiGetStateCSharp(deviceIdx);
                 normalizedAngle = rec.lX * 900 / 65536;
 
-                /* add recorded angle to list with time at which that angle occured */
                 wheelAngles.Add(new float[] { gameTime, normalizedAngle });
-
-                /* find angle at action delay & remove unnecessary entries */
-                for (int i = wheelAngles.Count - 1; i >= 0; i--)
+                               
+               for(int i = 0; i < wheelAngles.Count; i++)
                 {
-
-                    if (gameTime - wheelAngles[i][0] > actionDelay)
+                 
+                    if(gameTime - wheelAngles[i][0] > actionDelay)
                     {
                         quantizedAngle = QuantizeAngle(wheelAngles[i][1], actionQuantizationLevel);
                         wheelAngles.RemoveRange(0, i);
@@ -251,16 +258,15 @@ public class MountainBikeTask : MonoBehaviour
 
                 }
 
-
+                          
                 /* add to the player position with a scaled factor of the angle of the wheel
                  * NOTE: player position is related to previous position of the player.
                  */
                 playerLineXPos = playerLineXPos + sensitivity * quantizedAngle;
 
-                /* create force on the wheel from input file */
-                LogitechGSDK.LogiPlayConstantForce(deviceIdx, (int)bumpSize);
-
-                /* keep the player position from going off the screen */
+                LogitechGSDK.LogiPlayConstantForce(deviceIdx, (int) bumpSize);
+              
+                /* keep the player position from going off the screen */ 
                 if (playerLineXPos < XminScreen)
                 {
                     playerLineXPos = XminScreen;
@@ -285,21 +291,21 @@ public class MountainBikeTask : MonoBehaviour
 
     }
 
-    public void lineUpdate(ref LineRenderer lineToUpdate, float visionDelay, float pastHistoryT)
+    public void lineUpdate(ref LineRenderer lineToUpdate, float visionDelay, float pastHistoryT) 
     {
         /* redraws line each time step
          * inputs are: 
          * pointer to LineRenderer, time of advanced warning, time of past trail history */
-
+        
 
         float dt = 0.01f;
-        int visionQuantLevel = (int)visionQuantizationCurve.Evaluate(gameTime);
+        int visionQuantLevel = (int) visionQuantizationCurve.Evaluate(gameTime);
 
         /* how many seconds of the trail will be shown in total (past - visionDelay) 
          *  ie. if vision delay is -2 sec with 1 second of past shown,
          *  total length of line shown is (1 - (-2)) = 3 seconds of trail */
 
-        float tspanLine = (pastHistoryT - visionDelay);
+        float tspanLine = (pastHistoryT - visionDelay); 
         int numPoints = (int)(Math.Ceiling(tspanLine / dt)) + 1;
         lineToUpdate.SetVertexCount(numPoints);
 
@@ -315,16 +321,16 @@ public class MountainBikeTask : MonoBehaviour
          * history shown in seconds */
         float Ymin = -dy_per_dt * pastHistoryT;
 
-        for (int i = 0; i < numPoints; i++)
+        for(int i = 0; i < numPoints; i++) 
         {
-            /* create vector corresponding to path position 
+            /* create vector corresponding to path angle 
              * at current time point and add to array */
 
             timePoint = -pastHistoryT + i * dt;
             yPoint = Ymin + dy_per_dt * dt * i;
             xPoint = QuantizeTrailPosition(trailPositionCurve.Evaluate(gameTime + timePoint), visionQuantLevel);
             pathVectors.Add(new Vector3(xPoint, yPoint, 0f));
-
+            
         }
 
         /* update path x-position on y-axis at current game time */
@@ -333,60 +339,43 @@ public class MountainBikeTask : MonoBehaviour
         /* draw line with array of points created above */
         QuantTWidth = QuantizeTrailWidth((int)visionQuantizationCurve.Evaluate(gameTime));
         lineToUpdate.SetWidth(QuantTWidth, QuantTWidth);
-
+        
         lineToUpdate.SetPositions(pathVectors.ToArray());
-
+        
     }
 
     public float QuantizeTrailPosition(float trailPosition, int quantLevel)
     {
-        /* quantize horizontal axis into lanes of equal and discrete 
-         * width. Then report trail poisition as the center of the lane
-         * which the trail position value from the file is closest to */
+        /* quantize horizontal axis */
 
-        /* find number of lanes */
         int numLevels = (int)Math.Pow(2, quantLevel);
-
-        /* from that find width of each lane */
-        float deltaX = (float)(XmaxScreen - XminScreen) / ((float)numLevels);
-
-        /* keep trail from going off the screen */
-        if (trailPosition > XmaxScreen)
+        float deltaX = (float)(XmaxScreen - XminScreen) / ((float)numLevels); 
+        if(trailPosition > XmaxScreen)
         {
-            return XmaxScreen;
+            return XmaxScreen; 
         }
-        if (trailPosition < XminScreen)
+        if(trailPosition < XminScreen)
         {
-            return XminScreen;
+            return XminScreen; 
         }
-
-        /* find the truncated number of lanes trail position from file is from 
-         * leftmost of the screen */
+        /*for(float XLeft = XminScreen; XLeft <= XmaxScreen; XLeft+= deltaX)
+        {
+            
+            if(trailPosition < XLeft)
+            {
+                return (XLeft + (XLeft - deltaX)) / 2; 
+            }
+        }*/
+        
         int leftBlock = (int)Math.Floor((trailPosition - XminScreen) / deltaX);
-
-        /* if it is the edge of right most block, then subtract one so
-         * the position is made to the center of the rightmost */
-        if (leftBlock == numLevels)
-        {
-            leftBlock = numLevels - 1;
-        }
-
-        /* start from the left of the screen, add the number of lanes 
-         * times the width of each lane, plus one half a lane to put position
-         * in the center of that lane */
+        if (leftBlock == numLevels) { leftBlock = numLevels - 1; } // not go out of the screen
         return XminScreen + leftBlock * deltaX + deltaX / 2f;
     }
 
     public float QuantizeTrailWidth(int quantLevel)
     {
-        /* set the width of the trail in accordance to 
-         * width of the lane from quantized trail */
-
         int numLevels = (int)Math.Pow(2, quantLevel);
-
         float width = (float)(XmaxScreen - XminScreen) / (float)numLevels;
-
-        /* set min and max width */
         if (width < 0.1f)
         {
             return 0.1f;
@@ -395,13 +384,13 @@ public class MountainBikeTask : MonoBehaviour
         {
             return 1f;
         }
-        return width;
+        return width;  
     }
     public float QuantizeAngle(float wheelAngle, int quantLevel)
     {
 
         /* quantization level is the number of bits available for quantization of input */
-        int numLevels = (int)Math.Pow(2, quantLevel);
+        int numLevels = (int) Math.Pow(2, quantLevel);
         float angleDifference = totalAngleRange / numLevels;
 
         /* if wheelAngle is greater than largest angle in range
@@ -432,8 +421,8 @@ public class MountainBikeTask : MonoBehaviour
                             return quantizedAngle * -1;
                         }
                         else
-                            return quantizedAngle;
-
+                            return quantizedAngle; 
+                      
                     }
                 }
             }
@@ -450,7 +439,7 @@ public class MountainBikeTask : MonoBehaviour
         path.preWrapMode = WrapMode.ClampForever;
         path.postWrapMode = WrapMode.ClampForever;
         path.AddKey(0, 0);
-
+       
 
         actQuant = new AnimationCurve();
         actQuant.preWrapMode = WrapMode.ClampForever;
@@ -491,17 +480,17 @@ public class MountainBikeTask : MonoBehaviour
                 float visVal;
                 float bumpVal;
                 float actVal;
-                float visQuantVal;
-
+                float visQuantVal; 
+               
                 do
                 {
-
+                    
                     line = theReader.ReadLine();
 
                     if (line != null)
                     {
                         string[] entries = line.Split(',');
-
+                       
 
                         if (entries.Length > 0)
                         {
@@ -520,13 +509,13 @@ public class MountainBikeTask : MonoBehaviour
                             actDelay.AddKey(time, actVal);
                             visQuant.AddKey(time, visQuantVal);
 
-                            gameLength = (int)time + 1;
-
+                            gameLength = (int)time + 1; 
+                            
                         }
                     }
                 }
                 while (line != null);
-
+               
                 theReader.Close();
                 return;
             }
@@ -535,11 +524,11 @@ public class MountainBikeTask : MonoBehaviour
          * on what didn't work */
         catch (Exception e)
         {
-            Debug.Log("ERROR: " + e.Message);
+            Debug.Log("ERROR: " +  e.Message);
             return;
         }
 
-
+        
     }
 
     public void wheelPropSetup(ref LogitechGSDK.LogiControllerPropertiesData prop)
@@ -566,21 +555,21 @@ public class MountainBikeTask : MonoBehaviour
          * text file later
          * 
          * data saved in order of:
-         * Time, Path Position, Bump Size, Action Quantization, Action Delay, Vision Delay, Vision Quantization, Trail Error, Wheel Angle */
-
-
+         * time, trail position, bump size, quantization level, action delay, vision delay, position error, angle of wheel */
+         
+       
 
         float time = gameTime;
         float trailPosition = pathPositionXPos;
         float bump = bumpSize;
         float actQuantLevel = actionQuantizationLevel;
         float actDelay = actionDelay;
-        float visDelay = visionDelay;
+        float visDelay = visionDelay; 
         float playerError = playerLineXPos - pathPositionXPos;
         float angle = normalizedAngle;
-        float visQuantLevel = visionQuantizationLevel;
-
-
+        float visQuantLevel = visionQuantizationLevel; 
+        
+       
 
         errorData.Add(
                   time +
@@ -588,9 +577,9 @@ public class MountainBikeTask : MonoBehaviour
             "," + bump +
             "," + actQuantLevel +
             "," + actDelay +
-            "," + visDelay +
-            "," + visQuantLevel +
-            "," + playerError +
+            "," + visDelay + 
+            "," + visQuantLevel + 
+            "," + playerError + 
             "," + angle);
 
     }
@@ -601,9 +590,9 @@ public class MountainBikeTask : MonoBehaviour
         * saved positions and data for error
         * calculation later. Data to be written
         * in the order of:
-        * Time, Path Position, Bump Size, Action Quantization, Action Delay, Vision Delay, Vision Quantization, Trail Error, Wheel Angle
-        *
-        * FILES SAVED IN "Executable & Output Files/MountainBikeData"
+        * time, player position, width, distance (Goal Position)
+        * 
+        * FILES SAVED IN UnityCode/FittsLawData
         */
 
         string outputFileName = RecordFileName + "_" + gameDate + ".txt";
@@ -617,15 +606,14 @@ public class MountainBikeTask : MonoBehaviour
         }
 
         /* Save Score: */
-        outputFilePath += outputFileName;
+        outputFilePath += outputFileName; 
 
-        /* If file doesn't exist yet, create it */
-        if (!File.Exists(outputFilePath))
+        if (!File.Exists(outputFilePath)) /* If it doesn't exist yet, create it */
         {
             File.WriteAllText(outputFilePath, "");
         }
         File.WriteAllLines(outputFilePath, data);
-
+        
 
     }
 }
